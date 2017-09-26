@@ -1,7 +1,7 @@
 import random
 
 board = [[0 for x in range(3)] for y in range(3)] #array for representing the board
-maxNodes = 100000 #max nodes allowed during search, stop when limit is reached
+mnodes = 100000 #max nodes allowed during search, stop when limit is reached
 
 '''
 Sets the current state to be whatever is input. Assumes proper format. 
@@ -104,9 +104,12 @@ def randomizeState(n):
         elif(d == 4):
             move('right')
 
+def maxNodes(n):
+    mnodes = n
+
 #Replacement for main method since I forget how to make one in python
 while True:
-    inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\tprintState\trandomizeState\tmove\n->')
+    inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\tprintState\trandomizeState\tmove\tmaxNodes\n->')
     print()
     if(inp == 'setState'):
         setState(input("Input Board State: \n>>"))
@@ -120,3 +123,5 @@ while True:
     if(inp == 'randomizeState'):
         randomizeState(int(input('How many steps should we randomize?: ')))
     
+    if(inp = 'maxNodes'):
+        max(int(input('What is the maximum number of nodes allowed to be used during search: ')))
