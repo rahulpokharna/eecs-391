@@ -16,7 +16,6 @@ def setState(state):
         else:
             board[i][j] = c
             j += 1
-    printState()
 
 
 '''
@@ -31,7 +30,7 @@ def printState():
     print()
 
 '''
-Moves the blank spot in the inputted direction and says invalid if move is not valid
+Moves the blank spot in the inputted direction and says invalid if move is not valid. Remove prints in method
 '''
 def move(dire):
     print(dire)
@@ -90,6 +89,7 @@ def move(dire):
         print("That is not a valid move. Please submit either up, down, left, or right.")
     
 def randomizeState(n):
+    setState('b12 345 678')
     for x in range(n):
         #randomly choose 1 to 4, each being a direction
         
@@ -106,7 +106,8 @@ def randomizeState(n):
 
 #Replacement for main method since I forget how to make one in python
 while True:
-    inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\tprintState\trandomizeState\tmove\n')
+    inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\tprintState\trandomizeState\tmove\n->')
+    print()
     if(inp == 'setState'):
         setState(input("Input Board State: \n>>"))
 
