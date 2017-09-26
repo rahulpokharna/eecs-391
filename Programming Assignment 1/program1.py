@@ -1,4 +1,4 @@
-import sys
+import random
 
 board = [[0 for x in range(3)] for y in range(3)] #array for representing the board
 maxNodes = 100000 #max nodes allowed during search, stop when limit is reached
@@ -14,8 +14,8 @@ def setState(state):
             i += 1
             j = 0
         else:
-           board[i][j] = c
-           j += 1
+            board[i][j] = c
+            j += 1
     printState()
 
 
@@ -23,6 +23,7 @@ def setState(state):
 Prints out the board in a 3 by 3 table format, like looking at the puzzle itself
 '''
 def printState():
+    print('Current Board State:')
     for x in range(3):
         for y in range(3):
             print(board[x][y], end="")
@@ -32,20 +33,89 @@ def printState():
 '''
 Moves the blank spot in the inputted direction and says invalid if move is not valid
 '''
-def move(dir):
-    return {
-        'up': #do stuff in whitespace
-        'down':
-        'left':
-        'right':
-    }
-    print("That is not a valid move. Please submit either up, down, left, or right.")
-    printState()
+def move(dire):
+    print(dire)
+    i = -1
+    j = -1
+    #This finds the index of the current blank space
+    for x in range(3):
+        for y in range(3):
+            if(board[x][y] == 'b'):
+                i = x
+                j = y
+    if(dire == 'up'): 
+        i = i - 1
+        if(i >= 0):
+            temp = board[i][j]
+            board[i][j] = 'b'
+            board[i + 1][j] = temp
+            printState()
+        else:
+            print("That is not a valid move. Please Check the board again.")
+            printState()
 
+    elif(dire == 'down'): 
+        i = i + 1
+        if(i <= 2):
+            temp = board[i][j]
+            board[i][j] = 'b'
+            board[i - 1][j] = temp
+            printState()
+        else:
+            print("That is not a valid move. Please Check the board again.")
+            printState()
+
+    elif(dire == 'left'): 
+        j = j - 1
+        if(j >= 0):
+            temp = board[i][j]
+            board[i][j] = 'b'
+            board[i][j+1] = temp
+            printState()
+        else:
+            print("That is not a valid move. Please Check the board again.")
+            printState()
+
+    elif(dire == 'right'): 
+        j = j + 1
+        if(j <= 2):
+            temp = board[i][j]
+            board[i][j] = 'b'
+            board[i][j - 1] = temp
+            printState()
+        else:
+            print("That is not a valid move. Please Check the board again.")
+            printState()
+    else:
+        print("That is not a valid move. Please submit either up, down, left, or right.")
+    
+def randomizeState(n):
+    for x in range(n):
+        #randomly choose 1 to 4, each being a direction
+        
+        d = random.randint(1,4)
+        print(d)
+        if(d == 1):
+            move('up')
+        elif(d == 2):
+            move('down')
+        elif(d == 3):
+            move('left')
+        elif(d == 4):
+            move('right')
+
+#Replacement for main method since I forget how to make one in python
 while True:
-    inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\trandomizeState\n')
+    inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\tprintState\trandomizeState\tmove\n')
     if(inp == 'setState'):
         setState(input("Input Board State: \n>>"))
 
     if(inp == 'printState'):
         printState()
+    
+    if(inp == 'move'):
+        move(input('What direction do you want to move? (up, down, left, right): '))
+    
+    if(inp == 'randomizeState'):
+        randomizeState(int(input('How many steps should we randomize?: ')))
+    
