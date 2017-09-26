@@ -49,9 +49,11 @@ def move(dire):
             board[i][j] = 'b'
             board[i + 1][j] = temp
             printState()
+            return True
         else:
             print("That is not a valid move. Please Check the board again.")
             printState()
+            return False
 
     elif(dire == 'down'): 
         i = i + 1
@@ -60,9 +62,11 @@ def move(dire):
             board[i][j] = 'b'
             board[i - 1][j] = temp
             printState()
+            return True
         else:
             print("That is not a valid move. Please Check the board again.")
             printState()
+            return False
 
     elif(dire == 'left'): 
         j = j - 1
@@ -71,9 +75,11 @@ def move(dire):
             board[i][j] = 'b'
             board[i][j+1] = temp
             printState()
+            return True
         else:
             print("That is not a valid move. Please Check the board again.")
             printState()
+            return False
 
     elif(dire == 'right'): 
         j = j + 1
@@ -82,30 +88,39 @@ def move(dire):
             board[i][j] = 'b'
             board[i][j - 1] = temp
             printState()
+            return True
         else:
             print("That is not a valid move. Please Check the board again.")
             printState()
+            return False
     else:
         print("That is not a valid move. Please submit either up, down, left, or right.")
+        return False
     
 def randomizeState(n):
     setState('b12 345 678')
     for x in range(n):
         #randomly choose 1 to 4, each being a direction
-        
-        d = random.randint(1,4)
-        print(d)
-        if(d == 1):
-            move('up')
-        elif(d == 2):
-            move('down')
-        elif(d == 3):
-            move('left')
-        elif(d == 4):
-            move('right')
+        valid = False
+        while(valid == False):
+            d = random.randint(1,4)
+            if(d == 1):
+                valid = move('up')
+            elif(d == 2):
+                valid = move('down')
+            elif(d == 3):
+                valid = move('left')
+            elif(d == 4):
+                valid = move('right')
 
 def maxNodes(n):
     mnodes = n
+
+def solveAstar(heuristic):
+    if (heuristic == 'h1'):
+        x = 0
+    else:
+        x = 1
 
 #Replacement for main method since I forget how to make one in python
 while True:
