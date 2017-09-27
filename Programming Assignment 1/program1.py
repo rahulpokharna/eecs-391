@@ -138,5 +138,5 @@ while True:
     if(inp == 'randomizeState'):
         randomizeState(int(input('How many steps should we randomize?: ')))
     
-    if(inp = 'maxNodes'):
+    if(inp == 'maxNodes'):
         max(int(input('What is the maximum number of nodes allowed to be used during search: ')))
