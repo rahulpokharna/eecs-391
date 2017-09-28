@@ -2,6 +2,8 @@ import random
 
 board = [[0 for x in range(3)] for y in range(3)] #array for representing the board
 mnodes = 100000 #max nodes allowed during search, stop when limit is reached
+goalState = 'b12 345 678' #used to check final state
+goalBoard = [['b', '1', '2'], ['3', '4', '5'], ['6', '7', '8']] #used to check final board
 
 '''
 Sets the current state to be whatever is input. Assumes proper format. 
@@ -16,7 +18,6 @@ def setState(state):
         else:
             board[i][j] = c
             j += 1
-
 
 '''
 Prints out the board in a 3 by 3 table format, like looking at the puzzle itself
@@ -48,11 +49,11 @@ def move(dire):
             temp = board[i][j]
             board[i][j] = 'b'
             board[i + 1][j] = temp
-            printState()
+            #printState()
             return True
         else:
-            print("That is not a valid move. Please Check the board again.")
-            printState()
+            #print("That is not a valid move. Please Check the board again.")
+            #printState()
             return False
 
     elif(dire == 'down'): 
@@ -61,11 +62,11 @@ def move(dire):
             temp = board[i][j]
             board[i][j] = 'b'
             board[i - 1][j] = temp
-            printState()
+            #printState()
             return True
         else:
-            print("That is not a valid move. Please Check the board again.")
-            printState()
+            #print("That is not a valid move. Please Check the board again.")
+            #printState()
             return False
 
     elif(dire == 'left'): 
@@ -74,11 +75,11 @@ def move(dire):
             temp = board[i][j]
             board[i][j] = 'b'
             board[i][j+1] = temp
-            printState()
+            #printState()
             return True
         else:
-            print("That is not a valid move. Please Check the board again.")
-            printState()
+            #print("That is not a valid move. Please Check the board again.")
+            #printState()
             return False
 
     elif(dire == 'right'): 
@@ -87,14 +88,14 @@ def move(dire):
             temp = board[i][j]
             board[i][j] = 'b'
             board[i][j - 1] = temp
-            printState()
+            #printState()
             return True
         else:
-            print("That is not a valid move. Please Check the board again.")
-            printState()
+            #print("That is not a valid move. Please Check the board again.")
+            #printState()
             return False
     else:
-        print("That is not a valid move. Please submit either up, down, left, or right.")
+        #print("That is not a valid move. Please submit either up, down, left, or right.")
         return False
     
 def randomizeState(n):
@@ -102,7 +103,7 @@ def randomizeState(n):
     for x in range(n):
         #randomly choose 1 to 4, each being a direction
         valid = False
-        while(valid == False):
+        while(not valid):
             d = random.randint(1,4)
             if(d == 1):
                 valid = move('up')
@@ -112,6 +113,8 @@ def randomizeState(n):
                 valid = move('left')
             elif(d == 4):
                 valid = move('right')
+    print('The final state is:')
+    printState()
 
 def maxNodes(n):
     mnodes = n
@@ -122,8 +125,15 @@ def solveAstar(heuristic):
     else:
         x = 1
 
+def calcH1(state):
+    print('using h1')
+
+def calcH2(state):
+    print('using h2')
+
 #Replacement for main method since I forget how to make one in python
-while True:
+inp = ''
+while(inp != 'quit'):
     inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\tprintState\trandomizeState\tmove\tmaxNodes\n->')
     print()
     if(inp == 'setState'):
