@@ -1,27 +1,39 @@
 import random
+import math
 
 board = [[0 for x in range(3)] for y in range(3)] #array for representing the board
 mnodes = 100000 #max nodes allowed during search, stop when limit is reached
 goalState = 'b12 345 678' #used to check final state
 goalBoard = [['b', '1', '2'], ['3', '4', '5'], ['6', '7', '8']] #used to check final board
 
-'''
-Sets the current state to be whatever is input. Assumes proper format. 
-'''
+#Sets the current state to be whatever is input. Assumes proper format. 
 def setState(state):
+    board = convertState(state)
+
+#Converts an input string into an output array to compare to a final board state
+def convertState(state):
     i = 0
     j = 0
+    tempState = [[0 for x in range(3)] for y in range(3)] #array for representing the board
     for c in state:
         if(c == ' '):
             i += 1
             j = 0
         else:
-            board[i][j] = c
+            tempState[i][j] = c
             j += 1
+    return tempState
 
-'''
-Prints out the board in a 3 by 3 table format, like looking at the puzzle itself
-'''
+#made to convert board to state string
+def convertBoard(board):
+    c = ''
+    for x in range(3):
+        for y in range(3):
+            c = c + board[x][y]
+        c = c + ' '
+    return c
+
+#Prints out the board in a 3 by 3 table format, like looking at the puzzle itself
 def printState():
     print('Current Board State:')
     for x in range(3):
@@ -30,11 +42,8 @@ def printState():
         print() 
     print()
 
-'''
-Moves the blank spot in the inputted direction and says invalid if move is not valid. Remove prints in method
-'''
+#Moves the blank spot in the inputted direction and says invalid if move is not valid. Remove prints in method
 def move(dire):
-    print(dire)
     i = -1
     j = -1
     #This finds the index of the current blank space
@@ -126,12 +135,29 @@ def solveAstar(heuristic):
         x = 1
 
 def calcH1(state):
-    print('using h1')
+    h1 = 0
+    stateBoard = convertState(state)
+    for x in range(3):
+        for y in range(3):
+            if(stateBoard[x][y] != 'b' and goalBoard[x][y] != stateBoard[x][y]):
+                h1 += 1
+    #loop thru the state
+    return h1
 
 def calcH2(state):
-    print('using h2')
+    h2 = 0
+    stateBoard = convertState(state)
+    for x in range(3):
+        for y in range(3):
+            if(stateBoard[x][y] != 'b'):
+                ind1 = int(stateBoard[x][y]) % 3 #use to get the y
+                ind2 = int(int(stateBoard[x][y]) / 3) #use to get the x position of the number in the goal state
+                h2 += abs(x - ind2) + abs(y - ind1)
+    #loop thru the state
+    return h2
 
-#Replacement for main method since I forget how to make one in python
+
+#Replacement for main method
 inp = ''
 while(inp != 'quit'):
     inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\tprintState\trandomizeState\tmove\tmaxNodes\n->')
@@ -150,3 +176,9 @@ while(inp != 'quit'):
     
     if(inp == 'maxNodes'):
         max(int(input('What is the maximum number of nodes allowed to be used during search: ')))
+
+    if(inp == 'h1'):
+        print(calcH1(input('What is the current state to test ')))
+
+    if(inp == 'h2'):
+        print(calcH2(input('What is the current state to test ')))
