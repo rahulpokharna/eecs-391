@@ -1,5 +1,6 @@
 import random
 import math
+import fileinput
 
 goalState = 'b12 345 678' #used to check final state
 goalBoard = [['b', '1', '2'], ['3', '4', '5'], ['6', '7', '8']] #used to check final board
@@ -167,7 +168,6 @@ class Puzzle:
     def maxNodes(self, n):
         self.mnodes = n
 
-
     def solveAstar(self, heuristic):
         numNodes = 1
         openList = [self]
@@ -176,6 +176,10 @@ class Puzzle:
         while(len(openList) > 0):
             x = openList.pop(0)
             movesMade += 1
+
+            if(numNodes > self.mnodes):
+                return 'The search has exceeded the maximum alloted nodes. Terminating search.'
+
             if(x.isSolved()):
                 if(len(closedList) == 0):
                     
@@ -273,11 +277,16 @@ class Puzzle:
 
     # The main method that allows for user input
 def main():
+    #n is the puzzle state unique to the command file
+    n = Puzzle()
+    for line in fileinput.input('commands.txt'):
+        exec(line)
+
     p = Puzzle()
     inp = ''
-    q = None
+    random.seed(100)
     while(inp != 'quit'):
-        inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\tprintState\trandomizeState\tmove\tmaxNodes\n->')
+        inp = input('Here is a list of functions. Type what function you would like to run!\nsetState\tprintState\trandomizeState\tmove\tmaxNodes\tsolve a-star\n->')
         print()
         if(inp == 'setState'):
             p.setState(input("Input Board State: \n>>"))
@@ -294,20 +303,7 @@ def main():
         if(inp == 'maxNodes'):
             p.maxNodes(int(input('What is the maximum number of nodes allowed to be used during search: ')))
 
-        if(inp == 'h1'):
-            print(p.calcH1())
-
-        if(inp == 'h2'):
-            print(p.calcH2())
-        
-        if(inp == 'child'):
-            p.printState()
-            q = p.makeChild()
-            q.printState()
-            q.randomizeState(int(input('How many steps should we randomize?: ')))
-            p.printState()
-        
-        if(inp == 'star solve'):
+        if(inp == 'solve a-star'):
             print(p.solveAstar(input('What heuristic do you want to use? h1 or h2')))
 
 
