@@ -127,6 +127,7 @@ class Puzzle:
             #print("That is not a valid move. Please submit either up, down, left, or right.")
             return False
         
+    #randomizes the state after setting it equal to the goal state
     def randomizeState(self, n):
         self.setState(goalState)
         for x in range(n):
@@ -136,19 +137,21 @@ class Puzzle:
         print('After randomizing, the ', end='')
         self.printState()
 
+    #Returns a list of all valid directions to move in the current state
     def validMoves(self):
         moves = []
         x, y = self.findBlank()
-        if(x > 0):
+        if(x >= 1):
             moves.append('up')
-        if(x < 2):
+        if(x <= 1):
             moves.append('down')
-        if(y > 0):
+        if(y >= 1):
             moves.append('left')
-        if(y < 2):
+        if(y <= 1):
             moves.append('right')
         return moves
 
+    #Prints out the final solution using the parentMove and the parent states
     def printSolution(self):
         if(self.parent == None):
             return 'You have solved it! Take the steps from 1 onwards to solve.'
@@ -168,26 +171,27 @@ class Puzzle:
     def maxNodes(self, n):
         self.mnodes = n
 
+    #Solve A* Search with an input string representing either h1 or h2
     def solveAstar(self, heuristic):
         numNodes = 1
         openList = [self]
         closedList = []
-        movesMade = 0
+
+        #as long as there is an open state
         while(len(openList) > 0):
             x = openList.pop(0)
-            movesMade += 1
 
             if(numNodes > self.mnodes):
                 return 'The search has exceeded the maximum alloted nodes. Terminating search.'
 
             if(x.isSolved()):
                 if(len(closedList) == 0):
-                    
                     return 'The current board is already solved'
                 else:
+                    print('Number of nodes used: ' + str(numNodes))
                     return x.printSolution()
                     
-            
+            #checks every possible child for the current state that is being expanded
             nextChildren = x.makeNextChildren()
             inOpen = inClosed = False
             for child in nextChildren:
@@ -197,9 +201,11 @@ class Puzzle:
                 heur = child.getHeuristic(heuristic)
                 f = heur + child.depth
 
+                #if the state is newly found
                 if(not inOpen and not inClosed):
                     openList.append(child)
                 
+                #if the state exists in either the open or closed branch
                 elif(inOpen):
                     #gets the other instance of the board from the open list and compares
                     oldPosition = openList[openList.index(child)]
@@ -214,9 +220,9 @@ class Puzzle:
                         openList.append(child)
                         closedList.remove(oldPosition)
                     
-                    #YOU WERE HERE LAST CONTINUE
-
+            #If there are no more options to do with that state, then close it.
             closedList.append(x)
+            #Sort the list by the f value = heuristic value + number of moves to that state
             openList = sorted(openList, key = lambda c: c.getHeuristic(heuristic) + c.depth)
         return 'There is no solution for this board.'
 
@@ -233,12 +239,14 @@ class Puzzle:
         p.mnodes = self.mnodes 
         return p
     
+    #Returns th calculated heuristic of a given state and a heuristic, h1 or h2
     def getHeuristic(self, heuristic):
         if (heuristic == 'h1'):
             return self.calcH1()
         elif(heuristic == 'h2'):
             return self.calcH2()
-
+        
+    #This is to create a list of every possible child of a given parent puzzle
     def makeNextChildren(self):
         moves = self.validMoves()
 
@@ -253,6 +261,7 @@ class Puzzle:
             possibleChildren.append(makeNextChild(move1))
         return possibleChildren
 
+    #Calculate H1
     def calcH1(self):
         h1 = 0
         for x in range(3):
@@ -262,6 +271,7 @@ class Puzzle:
         #loop thru the state
         return h1
 
+    #Calculate H2
     def calcH2(self):
         h2 = 0
         for x in range(3):
@@ -304,7 +314,7 @@ def main():
             p.maxNodes(int(input('What is the maximum number of nodes allowed to be used during search: ')))
 
         if(inp == 'solve a-star'):
-            print(p.solveAstar(input('What heuristic do you want to use? h1 or h2')))
+            print(p.solveAstar(input('What heuristic do you want to use? (h1 or h2): ')))
 
 
 if __name__ == '__main__':
