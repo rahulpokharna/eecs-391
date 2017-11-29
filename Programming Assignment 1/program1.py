@@ -11,11 +11,11 @@ class Puzzle:
     #onstructor
     def __init__(self):
         self.board = [[0 for x in range(3)] for y in range(3)] #array for representing the board
-        self.mnodes = 1000 #max nodes allowed during search, stop when limit is reached
+        self.mnodes = 10000 #max nodes allowed during search, stop when limit is reached
         self.parent = None
         self.parentMove = 'Completed'
         self.depth = 0
-
+        self.h = 1000000
     #redefine equivalence function to compare boards between two puzzles
     def __eq__(self, other):
         if(other.__class__ != self.__class__):
@@ -269,6 +269,7 @@ class Puzzle:
                 if(self.board[x][y] != 'b' and goalBoard[x][y] != self.board[x][y]):
                     h1 += 1
         #loop thru the state
+        self.h = h1
         return h1
 
     #Calculate H2
@@ -281,6 +282,7 @@ class Puzzle:
                     ind2 = int(int(self.board[x][y]) / 3) #use to get the x position of the number in the goal state
                     h2 += abs(x - ind2) + abs(y - ind1)
         #loop thru the state
+        self.h = h2
         return h2
 
 
@@ -289,6 +291,7 @@ class Puzzle:
 def main():
     #n is the puzzle state unique to the command file
     n = Puzzle()
+    c = RubikCube()
     for line in fileinput.input('commands.txt'):
         exec(line)
 
@@ -315,6 +318,183 @@ def main():
 
         if(inp == 'solve a-star'):
             print(p.solveAstar(input('What heuristic do you want to use? (h1 or h2): ')))
+
+
+def RubikCube(Puzzle):
+    
+    #strings are treated as arrays of characters
+    self.board = 'yyyyggggoooobbbbrrrrwwww'
+    self.goalCube = 'yyyyggggoooobbbbrrrrwwww'
+    
+    self.manHelper = [[0, 1, 2, 1, 2, 3, 2, 1],
+            [1, 0, 1, 2, 3, 2, 1, 2],
+            [2, 1, 0, 1, 2, 1, 2, 3],
+            [1, 2, 1, 0, 1, 2, 3, 2],
+            [2, 3, 2, 1, 0, 1, 2, 1],
+            [3, 2, 1, 2, 1, 0, 1, 2],
+            [2, 1, 2, 3, 2, 1, 0, 1],
+            [1, 2, 1, 0, 1, 2, 3, 2]];
+
+
+    def __init__(self):
+        print('hi')
+    
+    def setState(self, inp):
+        self.board = inp
+    
+    def randomizeState(self, n):
+        moves = ["F", "F'", "U", "U'", "R", "R'"]
+        self.setState(goalCube)
+        for x in range(n):
+            #randomly choose 1 to 4, each being a direction
+            d = random.choice(moves)
+            self.move(d)
+        print('After randomizing, the ', end='')
+        self.printState()
+
+    def move(self, dir):
+        if(dir == "U"):
+            self.moveU()
+        
+        if(dir == "U'"):
+            self.moveU()
+            self.moveU()
+            self.moveU()
+        
+        if(dir == "F"):
+            self.moveF()
+        
+        if(dir == "F'"):
+            self.moveF()
+            self.moveF()
+            self.moveF()
+
+        if(dir == "R"):
+            self.moveR()
+
+        if(dir == "R'"):
+            self.moveR()
+            self.moveR()
+            self.moveR()
+
+    def moveU(self):
+        self.swap4(0, 1, 2, 3);
+        self.swap4(4, 16, 12, 8);
+        self.swap4(5, 17, 13, 9);
+    
+    def moveF(self):
+        self.swap4(3, 12, 21, 6);
+        self.swap4(8, 9, 10, 11);
+        self.swap4(2, 15, 20, 5);
+
+    def moveR(self):
+        self.swap4(12, 13, 14, 15);
+        self.swap4(2, 16, 22, 10);
+        self.swap4(1, 19, 21, 9);
+
+    def swap4(c1, c2, c3, c4):
+        self.swap(c1, c2);
+        self.swap(c1, c3);
+        self.swap(c1, c4);
+
+    def swap(self, c1, c2):
+        self.board[c1], self.board[c2] = self.board[c2], self.board[c1] 
+
+    #using inheritance so the same methods as the normal puzzle class
+    def validMoves(self):
+        return ["F", "F'", "U", "U'", "R", "R'"]
+
+    def isSolved(self):
+        return self.board == self.goalCube
+
+    def makeChild(self):
+        p = RubikCube()
+        p.setState(self.board) #to not have both puzzle classes have the same pinter to the board state
+        p.parent = self
+        p.depth = self.depth + 1
+        p.mnodes = self.mnodes 
+        return p
+
+    def printState(self):
+        print('Current board state:', end="\n  ")
+        print(self.board[0], end = "")
+        print(self.board[1], end = "   \n  ")
+        print(self.board[3], end = "")
+        print(self.board[2], end = "   \n")
+        print(self.board[4], end = "")
+        print(self.board[5], end = "")
+        print(self.board[8], end = "")
+        print(self.board[9], end = "")
+        print(self.board[12], end = "")
+        print(self.board[13], end = "")
+        print(self.board[16], end = "")
+        print(self.board[17], end = "\n")
+        print(self.board[7], end = "")
+        print(self.board[6], end = "")
+        print(self.board[11], end = "")
+        print(self.board[10], end = "")
+        print(self.board[15], end = "")
+        print(self.board[14], end = "")
+        print(self.board[19], end = "")
+        print(self.board[18], end = "\n  ")
+        print(self.board[20], end = "")
+        print(self.board[21], end = "")
+        print(self.board[23], end = "")
+        print(self.board[22], end = "   \n")
+
+    def toArray(self):
+        cubeArray = [['0' for x in range(3)] for  y in range(8)]
+        cubeArray[0] = [self.board[0], self.board[16], self.board[4]]
+        cubeArray[1] = [self.board[1], self.board[13], self.board[17]]
+        cubeArray[2] = [self.board[2], self.board[9], self.board[12]]
+        cubeArray[3] = [self.board[3], self.board[5], self.board[8]]
+        cubeArray[4] = [self.board[20], self.board[6], self.board[11]]
+        cubeArray[5] = [self.board[21], self.board[10], self.board[15]]
+        cubeArray[6] = [self.board[22], self.board[14], self.board[19]]
+        cubeArray[7] = [self.board[23], self.board[7], self.board[18]]
+        return cubearray
+
+    def goalState(self):
+        cubeArray = [['0' for x in range(3)] for  y in range(8)]
+        cubeArray[0] = [self.goalCube[0], self.goalCube[16], self.goalCube[4]]
+        cubeArray[1] = [self.goalCube[1], self.goalCube[13], self.goalCube[17]]
+        cubeArray[2] = [self.goalCube[2], self.goalCube[9], self.goalCube[12]]
+        cubeArray[3] = [self.goalCube[3], self.goalCube[5], self.goalCube[8]]
+        cubeArray[4] = [self.goalCube[20], self.goalCube[6], self.goalCube[11]]
+        cubeArray[5] = [self.goalCube[21], self.goalCube[10], self.goalCube[15]]
+        cubeArray[6] = [self.goalCube[22], self.goalCube[14], self.goalCube[19]]
+        cubeArray[7] = [self.goalCube[23], self.goalCube[7], self.goalCube[18]]
+        return cubearray;
+
+
+    def calcH1(self):
+        goalA = self.goalState()
+        boardArray = self.toArray()
+        for x in range(8):
+            goalA[x].sort()
+            boardArray[x].sort()
+
+        calcArray = []
+        for x in range(8):
+            for y in range(8):
+                if boardArray[x] == goalA[y]:
+                    calcArray[y] = y
+        m = 0
+        for x in range(8):
+            m += self.manHelper[x][calcArray[x]]
+        return m
+
+    def calcH2(self):
+        h2 = 0
+        
+        goalA = self.goalState()
+        boardArray = self.toArray()
+
+        for x in range(8):
+            if goalA[x] != boardArray[x]:
+                h2 += 1
+        
+        return h2
 
 
 if __name__ == '__main__':
