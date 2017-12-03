@@ -48,19 +48,12 @@ def question1c(iteration, flips):
     
 
 def question1():
-    # display it here better
     question1b()
-
-
-    #close the window to display part c
-
+    
     flips = [(1,1),(2,2),(2,3),(3,4)]
     for x in range(4):
         question1c(x, flips[x])
-
-
-    
-    plt.show()
+        
 
 def postProbTheta(theta, y, n):
     probability = pow(theta, y) * pow(1 - theta, n - y) * nCr(n,y) * (n + 1)
@@ -72,17 +65,17 @@ def question2():
     limeProb = [0, .25, .5, .75, 1]
     dataH = []
     for x in range(4):
-        dataH.append(generateData(limeProb[x]))
+        dataH.append(generateData(limeProb[x], 100))
 
     for x in range(4):
         #here we cal the graph for each bag, and print out each value
-        graphForBag(x, dataH[x])
-    
-    plt.show()
+        priorPlot, limeProbPlot = calcForBag(x, dataH[x])
+        graphForBag(x, priorPlot, limeProbPlot)
+
 
 
 #for each given bag, 0, 1, 2, 3 representing h1, h2, h3, h4 respectively
-def graphForBag(bag, dataH):
+def calcForBag(bag, dataH):
     
     prior = [.1, .2, .4, .2, .1]
     limeProb = [0, .25, .5, .75, 1]
@@ -91,18 +84,19 @@ def graphForBag(bag, dataH):
     totalCandyProb = 0
     for z in range(5):
         totalCandyProb = totalCandyProb + (prior[z] * limeProb[z])
-        plt.figure(bag)
-        plt.subplot(121)
-        plt.title('Data set having bag h{}'.format(bag + 1))
-        plt.plot(0, prior[z], plotColor[z], label='h{}'.format(z + 1))
-        plt.legend()
-        plt.subplot(122)
-        plt.title('Probability next candy is lime')
         
+    # Used to calculate 2c and graph it
+    sumList = [0, 0, 0, 0, 0]
+    priorPlot = [ [.1], [.2], [.4], [.2], [.1] ]
+    limeProbPlot = [.5]
 
-    for x in range(100):
+    for x in range(len(dataH)):
+        #probability that a candy drawn is what it is
         totalCandyProb = 0
+
+        #probability that you draw a lime
         totalLimeProb = 0
+
         for z in range(5):
             # 1 is a cherry, 0 is a lime. P(Cherry) = 1 - p(lime)
             if(dataH[x] == 1):
@@ -121,20 +115,63 @@ def graphForBag(bag, dataH):
             else:
                 prior[y] = limeProb[y] * prior[y] / totalCandyProb
             #put labels
-            plt.figure(bag)
-            plt.subplot(121)
-            plt.plot(x+1, prior[y], plotColor[y], label='h{}'.format(y + 1))
+            sumList[y] += prior[y]
+            
+            priorPlot[y].append(prior[y])
 
         #separate subplot to show the probability that next is lime
+        limeProbPlot.append(totalLimeProb)
+
+    return priorPlot, limeProbPlot
+
+def graphForBag(bag, priorPlot, limeProbPlot):
+    
+    prior = [.1, .2, .4, .2, .1]
+    limeProb = [0, .25, .5, .75, 1]
+    plotColor = ['ro', 'b^', 'gx', 'yp', 'kD']
+    
+    for z in range(5):
+        plt.figure(bag + 5)
+        plt.subplot(121)
+        plt.title('Data set having bag h{}'.format(bag + 1))
+        plt.plot(0, prior[z], plotColor[z], label='h{}'.format(z + 1))
+        plt.legend()
         plt.subplot(122)
-        plt.plot(x,totalLimeProb, 'ko')
+        plt.title('Probability next candy is lime')
 
+    for y in range(5):
+        plt.figure(bag + 5)
+        plt.subplot(121)
+        plt.plot(range(101), priorPlot[y], plotColor[y], label='h{}'.format(y + 1))
 
+    plt.subplot(122)
+    plt.plot(range(101),limeProbPlot, 'ko')
 
-def generateData(probLime):
+def graphForError(bag):
+    
+    limeProb = [0, .25, .5, .75, 1]
+    bagSum = [0, 0, 0, 0, 0]
+    plotColor = ['ro', 'b^', 'gx', 'yp', 'kD']
+    #for each bag type we are testing, do trials to show reduction in uncertainty for the specific bag
+    #for x in range(4):
+    x = bag
+    bagAvg = [ [], [], [], [], [] ]
+    for y in range(100):
+        priorPlot, limeProbPlot = calcForBag(y, generateData(limeProb[x], 100))
+        for z in range(5):
+            bagSum[z] += priorPlot[z][len(priorPlot[z]) - 1]#final value of the probability that a certain bag is the type of bag the data represents
+            bagAvg[z].append((bagSum[z]/(y + 1)))
+    
+    for y in range(5):    
+        plt.figure(x + 9)
+        plt.title('Error reduction with data as bag h{}'.format(x + 1))
+        plt.plot(bagAvg[y], plotColor[y], label='h{}'.format(y + 1))
+
+    
+
+def generateData(probLime, length):
     data = []
-    random.seed(100)
-    for x in range(100):
+    for x in range(length):
         if(probLime > 0 ):
             rVel = (random.uniform(0,1) * 4)
         else:
@@ -149,5 +186,9 @@ def generateData(probLime):
     return data
 
 if __name__ == "__main__":
-    #question1()
+    question1()
     question2()
+    for x in range(4):
+        graphForError(x)
+    plt.legend()
+    plt.show()
