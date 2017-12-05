@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
-#below is copied from internet to compute nCr
+import csv
 import math
 import random
 
+#below is copied from internet to compute nCr
 def nCr(n,r):
     f = math.factorial
     return f(n) // f(r) // f(n-r)
@@ -49,7 +50,7 @@ def question1c(iteration, flips):
 
 def question1():
     question1b()
-    
+
     flips = [(1,1),(2,2),(2,3),(3,4)]
     for x in range(4):
         question1c(x, flips[x])
@@ -175,7 +176,7 @@ def generateData(probLime, length):
         if(probLime > 0 ):
             rVel = (random.uniform(0,1) * 4)
         else:
-            rVel = 1;
+            rVel = 1
 
         # 0 is lime, 1 is cherry
         if rVel < 4 * probLime:
@@ -185,10 +186,16 @@ def generateData(probLime, length):
         
     return data
 
-if __name__ == "__main__":
+
+
+
+def main():
     question1()
     question2()
     for x in range(4):
         graphForError(x)
     plt.legend()
     plt.show()
+
+if __name__ == "__main__":
+    main()
