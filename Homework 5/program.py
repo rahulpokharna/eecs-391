@@ -151,22 +151,26 @@ def graphForBag(bag, priorPlot, limeProbPlot):
 def graphForError(bag):
     
     limeProb = [0, .25, .5, .75, 1]
-    bagSum = [0, 0, 0, 0, 0]
     plotColor = ['ro', 'b^', 'gx', 'yp', 'kD']
     #for each bag type we are testing, do trials to show reduction in uncertainty for the specific bag
-    #for x in range(4):
-    x = bag
     bagAvg = [ [], [], [], [], [] ]
+    limeProbs = []
+
     for y in range(100):
-        priorPlot, limeProbPlot = calcForBag(y, generateData(limeProb[x], 100))
-        for z in range(5):
-            bagSum[z] += priorPlot[z][len(priorPlot[z]) - 1]#final value of the probability that a certain bag is the type of bag the data represents
-            bagAvg[z].append((bagSum[z]/(y + 1)))
-    
-    for y in range(5):    
-        plt.figure(x + 9)
-        plt.title('Error reduction with data as bag h{}'.format(x + 1))
-        plt.plot(bagAvg[y], plotColor[y], label='h{}'.format(y + 1))
+        priorPlot, limeProbPlot = calcForBag(y, generateData(limeProb[bag], 100))
+        limeProbs.append(limeProbPlot)
+
+    limeAvg = []
+    for x in range(100):
+        limeSum = 0
+        for y in range(100):
+            limeSum += limeProbs[y][x]
+        limeAvg.append(limeSum/100.0)
+
+    plt.figure(bag + 9)
+    plt.axis([-1, 101, -.1, 1.1])
+    plt.title('Average convergence of lime probaility with data as bag h{}'.format(bag + 1))
+    plt.plot(limeAvg, plotColor[bag], label='h{}'.format(bag + 1))            
 
     
 
